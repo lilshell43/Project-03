@@ -19,3 +19,5 @@ install.packages("glue")
 install.packages("digest")
 
 R code to run code from github:
+
+shiny::runGitHub("Project-03", "lilshell43", subdir = "ShinyApp")
