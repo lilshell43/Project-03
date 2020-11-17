@@ -12,7 +12,7 @@ devtools::install_github("vqv/ggbiplot")
 
 install.packages(c("plotly", "dplyr", "shiny", "shinythemes", "ggplot2", "caret", "randomForest"))
 
-These 2 packages below might not be needed to run. When installing nbastatR package, had to delete these packages and reinstall.
+These 2 packages below might not be needed to run. When installing nbastatR package, had to delete these packages and reinstall. 
 
 install.packages("glue")
 
