@@ -178,6 +178,10 @@ shinyServer(function(input, output) {
     #------------------------------------------------------------------  
     output$pca2 <- renderPlot({
         
+        PCs <- prcomp(select(if (input$career=="Career Regular Season Totals"){dataPlayerSeasonTotalsRegularSeason}
+                             else if (input$career=="Career Playoff Totals"){dataPlayerSeasonTotalsPostSeason}, 
+                             gp:ptsTotals) , scale = TRUE)
+        
         screeplot(PCs, type = "lines") #plot used for visual
         
     })
@@ -309,6 +313,21 @@ shinyServer(function(input, output) {
     #------------------------------------------------------------------  
     
     output$ppgpredictrfrmse <- renderPrint({
+        
+        names(lebronpergame) <- make.names(names(lebronpergame))
+        
+        set.seed(50)
+        train <- sample(1:nrow(lebronpergame), size = nrow(lebronpergame)*.95)
+        test <- dplyr::setdiff(1:nrow(lebronpergame), train)
+        
+        lbjTrain <- lebronpergame[train, ]
+        lbjTest <- lebronpergame[test, ]
+        
+        rfit <- randomForest(`Points.Per.Game` ~ ., data = lbjTrain, mtry = ncol(lbjTrain)/3,
+                             ntree = input$trees, importance = TRUE)
+        rfPred <- predict(rfit, newdata = dplyr::select(lbjTest, -`Points.Per.Game`))
+        as.data.frame(rfPred)  %>% round(digits = 2) %>% rename(`Predicted Points Per Game` = rfPred)
+        
         
         rfRMSE<-sqrt(mean((rfPred-lbjTest$`Points.Per.Game`)^2))
         rfRMSE
